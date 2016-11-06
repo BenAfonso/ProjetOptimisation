@@ -1,0 +1,76 @@
+var nombreProjets;
+var nombreEtudiants;
+var Projets = [];
+var Etudiants = [];
+var ErreurEtudiants = [];
+var BinomesPossibles = [];
+var ErreursBinomes = [];
+
+Etudiant = {
+  "Nom": "Benjamin AFONSO",
+  "Voeux": {
+    "TresBien": 3
+    "Bien": 2
+    "AssezBien": 1
+    "Passable": 4
+    "ARejeter": 5
+  }
+}
+
+BinomesPossibles = [
+  [1,2],
+  [3,4],
+  [1,3],
+  [2,4],
+  [1,4],
+  [2,3]
+]
+
+
+
+
+RepartitionsBinomesPossibles = [
+  [[1,2],[3,4]],
+  [[1,3],[2,4]],
+  [[1,4],[2,3]]
+]
+
+ErreurRepartitions = [ ErreurRep1, ..., ErreurRepN ]
+
+ErreurEtudiant = [ErreurProjet1, ... , ErreurProjetN]
+
+ErreurEtudiants = [
+  [4,1,0,9,16], // Etudiant 1
+  [4,1,0,9,16], // Etudiant 2
+  [4,1,0,9,16], // Etudiant 3
+  [4,1,0,9,16]  // Etudiant 4
+]
+
+
+ErreurRepartition = {
+  [ [Binome1, Projet1], Erreur ],
+  [ [Binome2, Projet2], Erreur ],
+  [ [Binome3, Projet3], Erreur ]
+}
+
+[
+  [REPARTITION1, PROJET1, ERREUR],
+  [REPARTITION1, PROJET2, ERREUR],
+  [REPARTITION2, PROJET1, ERREUR],
+  [REPARTITION2, PROJET2, ERREUR],
+]
+
+ERREUR = SOMME(ERREURSparBinomesPourProjet(1/2))
+
+Spécifications fonctionnelles:
+- ajouterEtudiant() X
+- supprimerEtudiant()
+- ajouterVoeuxEtudiant()
+- modifierVoeuxEtudiant()
+
+- getNombreRepartitions()
+
+- calculerBinomesPossibles()
+- calculerRepartitionsBinomesPossibles()
+- calculerErreurEtudiants()
+- calculerErreurRepartitions()
