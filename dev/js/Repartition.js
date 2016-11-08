@@ -11,6 +11,9 @@ var Repartition = (function () {
         });
         this.erreur = erreur;
     };
+    Repartition.prototype.getErreur = function () {
+        return this.erreur;
+    };
     return Repartition;
 }());
 exports.Repartition = Repartition;

@@ -9,11 +9,22 @@ var Repartitions = (function () {
         this.binomesPossibles = [];
         this.repartitionsBinomesPossibles = [];
         this.repartitionsProjetsPossibles = [];
+        this.bestRepartitions = [];
+        this.repartitions = [];
+        var t0 = new Date().getTime();
+        this.compute();
+        var t1 = new Date().getTime();
+        this.timeElapsed = (t1 - t0);
+    }
+    Repartitions.prototype.compute = function () {
         this.calculerBinomesPossibles();
         this.calculerRepartitionsBinomesPossibles();
         this.calculerRepartitionsProjetsPossibles();
         this.calculerRepartitionsPossibles();
-    }
+        this.getMinErreur();
+        this.getBestRepartitions();
+        this.bestRepartition = this.getBestRepartition();
+    };
     Repartitions.prototype.ajouterEtudiant = function (etudiant) {
         this.etudiants.push(etudiant);
     };
@@ -30,25 +41,7 @@ var Repartitions = (function () {
     Repartitions.prototype.calculerRepartitionsBinomesPossibles = function () {
         // Toutes les combinaisons de binômes possibles
         /*
-        let a: Array<Binome> = this.binomesPossibles;
-          var fn = function(n: any, src: Array<Binome>, got: Array<Binome>, all: Array<Array<Binome>>) {
     
-            if (n == 0) {
-              if (got.length > 0) {
-                all[all.length] = got;
-              }
-              return;
-            }
-            for (var j = 0; j < src.length; j++) {
-              fn(n - 1, src.slice(j + 1), got.concat([src[j]]), new Array(a));
-            }
-            return;
-          }
-          let all: any = [];
-          for (var i=0; i < a.length; i++) {
-            fn(i, a, [], all);
-          }
-          all.push(a);
     
           // Enlever les doublons
           this.repartitionsBinomesPossibles = all;
@@ -74,7 +67,6 @@ var Repartitions = (function () {
                 }
             });
             if (repartition.length > (this_1.etudiants.length / 2 - 1)) {
-                console.log(repartition);
                 this_1.repartitionsBinomesPossibles.push(repartition);
             }
             G.splice(0, 1);
@@ -87,43 +79,44 @@ var Repartitions = (function () {
     Repartitions.prototype.calculerRepartitionsProjetsPossibles = function () {
         // # Précond: Nombre d'étudiants % 2 == 0 => Nombre de binomes entier
         //TODO Imposer la taille des répartitions à Nombre de binômes
-        console.log(this.projets);
-        this.anagramma(this.projets, 0);
+        var permutate = function (src, minLen, maxLen) {
+            minLen = minLen - 1 || 0;
+            maxLen = maxLen || src.length + 1;
+            var Asource = src.slice(); // copy the original so we don't apply results to the original.
+            var Aout = [];
+            var minMax = function (arr) {
+                var len = arr.length;
+                if (len > minLen && len <= maxLen) {
+                    Aout.push(arr);
+                }
+            };
+            var picker = function (arr, holder, collect) {
+                if (holder.length) {
+                    collect.push(holder);
+                }
+                var len = arr.length;
+                for (var i = 0; i < len; i++) {
+                    var arrcopy = arr.slice();
+                    var elem = arrcopy.splice(i, 1);
+                    var result = holder.concat(elem);
+                    minMax(result);
+                    if (len) {
+                        picker(arrcopy, result, collect);
+                    }
+                    else {
+                        collect.push(result);
+                    }
+                }
+            };
+            picker(Asource, [], []);
+            return Aout;
+        };
+        this.repartitionsProjetsPossibles = permutate(this.projets, this.etudiants.length / 2, this.etudiants.length / 2);
+        //console.log(this.repartitionsProjetsPossibles);
     };
     Repartitions.prototype.calculerRepartitionsPossibles = function () {
         var repartitions;
-        // 5 fois
         var assignations = [];
-        // Un ensemble de binomes et un ensemble de projets
-        // Binome 1 -> Projet 1
-        // Binome 2 -> Projet 2
-        var max;
-        /*
-        binomes
-        RepartitionProjets
-        Pour tout i entre 0 et nbBinomes
-          repartition.reset()
-          repartition.ajouter(binomes[i], RepartitionProjets[j])
-        FinPour
-  
-  
-        BINOMES[0][0] = RepartitionProjets[0][0]
-        BINOMES[0][1] = RepartitionProjets[0][1]
-        BINOMES[0][2] = RepartitionProjets[0][2]
-  j+1
-        BINOMES[0][0] = RepartitionProjets[1][0]
-        BINOMES[0][1] = RepartitionProjets[1][1]
-        BINOMES[0][2] = RepartitionProjets[1][2]
-  j+2
-        BINOMES[0][0] = RepartitionProjets[2][0]
-        BINOMES[0][1] = RepartitionProjets[2][1]
-        BINOMES[0][2] = RepartitionProjets[2][2]
-  
-        BINOMES[1][0] = RepartitionProjets[1][0]
-  
-        */
-        //console.log(this.repartitionsBinomesPossibles.length);
-        //console.log(this.repartitionsProjetsPossibles);
         var nbBinomes = this.repartitionsBinomesPossibles.length;
         var nbProjets = this.repartitionsProjetsPossibles.length;
         var nbBinomesParRepartition = this.repartitionsBinomesPossibles[0].length;
@@ -131,11 +124,24 @@ var Repartitions = (function () {
             for (var j = 0; j < nbProjets; j++) {
                 for (var k = 0; k < nbBinomesParRepartition; k++) {
                     var assignation = new Assignation_1.Assignation(this.repartitionsBinomesPossibles[i][k], this.repartitionsProjetsPossibles[j][k]);
-                    //console.log(this.repartitionsBinomesPossibles[i][k], this.repartitionsProjetsPossibles[j][k]);
                     assignations.push(assignation);
                 }
                 var repartition = new Repartition_1.Repartition(assignations);
+                this.repartitions.push(repartition);
                 assignations = [];
+            }
+        }
+    };
+    Repartitions.prototype.getMinErreur = function () {
+        var erreurMin = 100000;
+        for (var i = 0; i < this.repartitions.length; i++) {
+            if (this.repartitions[i].getErreur() < erreurMin) {
+                erreurMin = this.repartitions[i].getErreur();
+                this.bestRepartitions = [];
+                this.bestRepartitions.push(this.repartitions[i]);
+            }
+            else if (this.repartitions[i].getErreur() == erreurMin) {
+                this.bestRepartitions.push(this.repartitions[i]);
             }
         }
     };
@@ -151,11 +157,21 @@ var Repartitions = (function () {
     Repartitions.prototype.getEtudiants = function () {
         return this.etudiants;
     };
+    Repartitions.prototype.pickRandomNumberBetween = function (a, b) {
+        return Math.floor(Math.random() * b) + a;
+    };
     Repartitions.prototype.getProjets = function () {
         return this.projets;
     };
     Repartitions.prototype.getRepartitions = function () {
         return this.repartitions;
+    };
+    Repartitions.prototype.getBestRepartitions = function () {
+        return this.bestRepartitions;
+    };
+    Repartitions.prototype.getBestRepartition = function () {
+        var rand = this.pickRandomNumberBetween(0, this.bestRepartitions.length - 1);
+        return this.bestRepartitions[rand];
     };
     Repartitions.prototype.getNombreRepartitions = function () {
         /* (Combinaison de 2 parmi nombre d'étudiant * Arrangements de nombre de
@@ -169,27 +185,6 @@ var Repartitions = (function () {
             return 1;
         else
             return n * this.factorielle(n - 1);
-    };
-    Repartitions.prototype.anagramma = function (T, first) {
-        if ((T.length - first) <= 1) {
-            //console.log(T);
-            this.repartitionsProjetsPossibles.push(T);
-            console.log(this.repartitionsProjetsPossibles);
-        }
-        else {
-            for (var i = 0; i < T.length - first; i++) {
-                this.round(T, first);
-                this.anagramma(T, first + 1);
-            }
-        }
-    };
-    Repartitions.prototype.round = function (T, i) {
-        var temp = T[i];
-        var j;
-        for (j = i; j < T.length - 1; j++) {
-            T[j] = T[j + 1];
-        }
-        T[T.length - 1] = temp;
     };
     return Repartitions;
 }());

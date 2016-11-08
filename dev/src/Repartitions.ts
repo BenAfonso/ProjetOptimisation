@@ -7,23 +7,47 @@ import {Repartition} from './Repartition';
 export class Repartitions {
 
   repartitions: Array<Repartition>;
+  bestRepartitions: Array<Repartition>;
+  bestRepartition: Repartition;
   repartitionsProjetsPossibles: Array<Array<Projet>>;
   repartitionsBinomesPossibles: Array<Array<Binome>>;
   etudiants: Array<Etudiant>;
   projets: Array<Projet>;
   binomesPossibles: Array<Binome>;
   projetsPossibles: Array<Array<Projet>>;
+  timeElapsed: number;
 
   constructor(etudiants: Array<Etudiant>, projets: Array<Projet>) {
+
     this.etudiants = etudiants;
     this.projets = projets;
     this.binomesPossibles = [];
     this.repartitionsBinomesPossibles = [];
     this.repartitionsProjetsPossibles = [];
+    this.bestRepartitions = [];
+    this.repartitions = [];
+
+    var t0 = new Date().getTime();
+    this.compute();
+    var t1 = new Date().getTime();
+    
+    this.timeElapsed = (t1-t0);
+  }
+
+  compute() {
+
     this.calculerBinomesPossibles();
     this.calculerRepartitionsBinomesPossibles();
     this.calculerRepartitionsProjetsPossibles();
     this.calculerRepartitionsPossibles();
+
+    this.getMinErreur();
+
+    this.getBestRepartitions();
+
+    this.bestRepartition = this.getBestRepartition();
+
+
   }
 
   ajouterEtudiant(etudiant: Etudiant) {
@@ -44,25 +68,7 @@ export class Repartitions {
   calculerRepartitionsBinomesPossibles() {
     // Toutes les combinaisons de binômes possibles
     /*
-    let a: Array<Binome> = this.binomesPossibles;
-      var fn = function(n: any, src: Array<Binome>, got: Array<Binome>, all: Array<Array<Binome>>) {
 
-        if (n == 0) {
-          if (got.length > 0) {
-            all[all.length] = got;
-          }
-          return;
-        }
-        for (var j = 0; j < src.length; j++) {
-          fn(n - 1, src.slice(j + 1), got.concat([src[j]]), new Array(a));
-        }
-        return;
-      }
-      let all: any = [];
-      for (var i=0; i < a.length; i++) {
-        fn(i, a, [], all);
-      }
-      all.push(a);
 
       // Enlever les doublons
       this.repartitionsBinomesPossibles = all;
@@ -92,7 +98,6 @@ export class Repartitions {
 
             })
             if (repartition.length > (this.etudiants.length / 2 - 1)) {
-              console.log(repartition);
               this.repartitionsBinomesPossibles.push(repartition);
             }
             G.splice(0,1);
@@ -108,71 +113,93 @@ export class Repartitions {
     // # Précond: Nombre d'étudiants % 2 == 0 => Nombre de binomes entier
 
     //TODO Imposer la taille des répartitions à Nombre de binômes
-    this.anagramma(this.projets,0);
 
+    var permutate = function(src: Array<Projet>, minLen: number, maxLen: number) {
+
+    minLen = minLen-1 || 0;
+    maxLen = maxLen || src.length+1;
+    var Asource = src.slice(); // copy the original so we don't apply results to the original.
+
+    var Aout: Array<Array<Projet>> = [];
+
+    var minMax = function(arr: any){
+        var len = arr.length;
+        if(len > minLen && len <= maxLen){
+            Aout.push(arr);
+        }
+    }
+
+    var picker = function (arr: any, holder: any, collect: any) {
+        if (holder.length) {
+           collect.push(holder);
+        }
+        var len = arr.length;
+        for (var i=0; i<len; i++) {
+            var arrcopy = arr.slice();
+            var elem = arrcopy.splice(i, 1);
+            var result = holder.concat(elem);
+            minMax(result);
+            if (len) {
+                picker(arrcopy, result, collect);
+            } else {
+                collect.push(result);
+            }
+        }
+    }
+
+    picker(Asource, [], []);
+
+    return Aout;
+
+
+  }
+
+    this.repartitionsProjetsPossibles = permutate(this.projets, this.etudiants.length/2, this.etudiants.length/2);
+    //console.log(this.repartitionsProjetsPossibles);
   }
 
   calculerRepartitionsPossibles() {
-    let repartitions: Array<Repartition>;
-
-    // 5 fois
-
+      let repartitions: Array<Repartition>;
       let assignations: Array<Assignation> = [];
-      // Un ensemble de binomes et un ensemble de projets
-      // Binome 1 -> Projet 1
-      // Binome 2 -> Projet 2
-      let max: number;
-
-      /*
-      binomes
-      RepartitionProjets
-      Pour tout i entre 0 et nbBinomes
-        repartition.reset()
-        repartition.ajouter(binomes[i], RepartitionProjets[j])
-      FinPour
-
-
-      BINOMES[0][0] = RepartitionProjets[0][0]
-      BINOMES[0][1] = RepartitionProjets[0][1]
-      BINOMES[0][2] = RepartitionProjets[0][2]
-j+1
-      BINOMES[0][0] = RepartitionProjets[1][0]
-      BINOMES[0][1] = RepartitionProjets[1][1]
-      BINOMES[0][2] = RepartitionProjets[1][2]
-j+2
-      BINOMES[0][0] = RepartitionProjets[2][0]
-      BINOMES[0][1] = RepartitionProjets[2][1]
-      BINOMES[0][2] = RepartitionProjets[2][2]
-
-      BINOMES[1][0] = RepartitionProjets[1][0]
-
-      */
-
-
-      //console.log(this.repartitionsBinomesPossibles.length);
-      //console.log(this.repartitionsProjetsPossibles);
-
       let nbBinomes: number = this.repartitionsBinomesPossibles.length;
       let nbProjets: number = this.repartitionsProjetsPossibles.length;
       let nbBinomesParRepartition: number = this.repartitionsBinomesPossibles[0].length;
+
+
       for (var i = 0; i < nbBinomes; i++) {
+
         for (var j = 0; j < nbProjets; j++) {
           for (var k = 0; k < nbBinomesParRepartition; k++) {
             let assignation: Assignation = new Assignation(this.repartitionsBinomesPossibles[i][k], this.repartitionsProjetsPossibles[j][k]);
-            //console.log(this.repartitionsBinomesPossibles[i][k], this.repartitionsProjetsPossibles[j][k]);
             assignations.push(assignation);
           }
           let repartition: Repartition = new Repartition(assignations);
+          this.repartitions.push(repartition);
           assignations = [];
         }
+
       }
-
-
-
-
-
-
   }
+
+
+
+
+  getMinErreur() {
+
+    let erreurMin = 100000;
+
+    for (var i = 0; i < this.repartitions.length; i++) {
+      if (this.repartitions[i].getErreur() < erreurMin) {
+        erreurMin = this.repartitions[i].getErreur();
+        this.bestRepartitions = [];
+        this.bestRepartitions.push(this.repartitions[i]);
+      } else if (this.repartitions[i].getErreur() == erreurMin) {
+        this.bestRepartitions.push(this.repartitions[i]);
+      }
+    }
+  }
+
+
 
   getBinomesPossibles() {
     return this.binomesPossibles;
@@ -190,12 +217,27 @@ j+2
     return this.etudiants;
   }
 
+  pickRandomNumberBetween(a: number, b: number) {
+    return Math.floor(Math.random() * b) + a;
+  }
+
   getProjets() {
     return this.projets;
   }
 
   getRepartitions() {
     return this.repartitions;
+  }
+
+  getBestRepartitions() {
+    return this.bestRepartitions;
+  }
+
+
+  getBestRepartition(): Repartition {
+    let rand: number = this.pickRandomNumberBetween(0,this.bestRepartitions.length-1);
+
+    return this.bestRepartitions[rand];
   }
 
   getNombreRepartitions() {
@@ -213,28 +255,6 @@ j+2
     else return n*this.factorielle(n-1);
   }
 
-  anagramma(T: Array<Projet>,first: number){
-       if ((T.length - first) <= 1){
-         //console.log(T);
-         this.repartitionsProjetsPossibles.push(T);
-         console.log(this.repartitionsProjetsPossibles);
-         // TODO: Résoudre cette merde
-       }else {
-         for (var i = 0; i < T.length-first ; i++) {
-           this.round(T, first);
-           this.anagramma(T, first+1);
-         }
-       }
-  }
-
-  round(T: Array<Projet>, i: number){
-      let temp: Projet = T[i];
-      let j: number;
-      for (j=i;j < T.length-1;j++) {
-          T[j] = T[j+1];
-      }
-      T[T.length-1]= temp;
-  }
 
 
 

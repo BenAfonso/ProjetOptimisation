@@ -9,12 +9,20 @@ export class Repartition {
     this.calculerErreur();
   }
 
+  getRepartition() {
+    return this.repartition;
+  }
+
   calculerErreur() {
     let erreur: number = 0;
     this.repartition.forEach(function(assignation: Assignation) {
       erreur+=assignation.getErreur();
     });
     this.erreur = erreur;
+  }
+
+  getErreur() {
+    return this.erreur;
   }
 
 }
