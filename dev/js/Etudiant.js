@@ -1,4 +1,5 @@
 "use strict";
+var Settings_1 = require('./Settings');
 var Etudiant = (function () {
     function Etudiant(nom, voeux) {
         this.nom = nom;
@@ -17,13 +18,16 @@ var Etudiant = (function () {
         this.nom = nom;
     };
     Etudiant.prototype.getErreur = function (projet) {
-        var err = this.voeux.getAllVoeux().indexOf(projet);
+        var err = Settings_1.Settings.CoefficientErreur[this.voeux.getAllVoeux().indexOf(projet)];
         if (err > -1) {
-            return err * err;
+            return err;
         }
         else {
-            return 1000;
+            return Settings_1.Settings.CoefficientErreurMax;
         }
+    };
+    Etudiant.prototype.toString = function () {
+        return this.nom;
     };
     return Etudiant;
 }());

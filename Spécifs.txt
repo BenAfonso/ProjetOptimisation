@@ -74,3 +74,50 @@ Spécifications fonctionnelles:
 - calculerRepartitionsBinomesPossibles()
 - calculerErreurEtudiants()
 - calculerErreurRepartitions()
+
+
+
+
+
+
+
+
+
+
+
+<--- Last few GCs --->
+
+   19662 ms: Mark-sweep 1393.6 (1438.0) -> 1393.6 (1438.0) MB, 1303.4 / 0.0 ms [allocation failure] [scavenge might not succeed].
+   20752 ms: Mark-sweep 1393.6 (1438.0) -> 1393.6 (1438.0) MB, 1088.4 / 0.0 ms (+ 1.0 ms in 1 steps since start of marking, biggest step 1.0 ms) [allocation failure] [scavenge might not succeed].
+   22358 ms: Mark-sweep 1393.6 (1438.0) -> 1393.6 (1438.0) MB, 1606.2 / 0.0 ms [allocation failure] [scavenge might not succeed].
+
+
+<--- JS stacktrace --->
+Cannot get stack trace in GC.
+FATAL ERROR: MarkCompactCollector: semi-space copy, fallback in old gen Allocation failed - JavaScript heap out of memory
+ 1: node::Abort() [/usr/local/bin/node]
+ 2: node::FatalException(v8::Isolate*, v8::Local<v8::Value>, v8::Local<v8::Message>) [/usr/local/bin/node]
+ 3: v8::Utils::ReportApiFailure(char const*, char const*) [/usr/local/bin/node]
+ 4: v8::Utils::ApiCheck(bool, char const*, char const*) [/usr/local/bin/node]
+ 5: v8::internal::V8::FatalProcessOutOfMemory(char const*, bool) [/usr/local/bin/node]
+ 6: v8::internal::MarkCompactCollector::EvacuateNewSpaceVisitor::AllocateTargetObject(v8::internal::HeapObject*, v8::internal::HeapObject**) [/usr/local/bin/node]
+ 7: v8::internal::MarkCompactCollector::EvacuateNewSpaceVisitor::Visit(v8::internal::HeapObject*) [/usr/local/bin/node]
+ 8: v8::internal::MarkCompactCollector::VisitLiveObjects(v8::internal::MemoryChunk*, v8::internal::MarkCompactCollector::HeapObjectVisitor*, v8::internal::MarkCompactCollector::IterationMode) [/usr/local/bin/node]
+ 9: v8::internal::MarkCompactCollector::Evacuator::EvacuateSinglePage(v8::internal::MemoryChunk*, v8::internal::MarkCompactCollector::HeapObjectVisitor*) [/usr/local/bin/node]
+10: v8::internal::EvacuationJobTraits::ProcessPageInParallel(v8::internal::Heap*, v8::internal::MarkCompactCollector::Evacuator*, v8::internal::MemoryChunk*, int*) [/usr/local/bin/node]
+11: v8::internal::PageParallelJob<v8::internal::EvacuationJobTraits>::Task::RunInternal() [/usr/local/bin/node]
+12: v8::internal::MarkCompactCollector::EvacuatePagesInParallel() [/usr/local/bin/node]
+13: v8::internal::MarkCompactCollector::EvacuateNewSpaceAndCandidates() [/usr/local/bin/node]
+14: v8::internal::MarkCompactCollector::CollectGarbage() [/usr/local/bin/node]
+15: v8::internal::Heap::MarkCompact() [/usr/local/bin/node]
+16: v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::GCCallbackFlags) [/usr/local/bin/node]
+17: v8::internal::Heap::CollectGarbage(v8::internal::GarbageCollector, char const*, char const*, v8::GCCallbackFlags) [/usr/local/bin/node]
+18: v8::internal::Factory::NewUninitializedFixedArray(int) [/usr/local/bin/node]
+19: v8::internal::Factory::NewJSArrayStorage(v8::internal::Handle<v8::internal::JSArray>, int, int, v8::internal::ArrayStorageAllocationMode) [/usr/local/bin/node]
+20: v8::internal::Factory::NewJSArray(v8::internal::ElementsKind, int, int, v8::internal::ArrayStorageAllocationMode, v8::internal::PretenureFlag) [/usr/local/bin/node]
+21: v8::internal::ElementsAccessor::Concat(v8::internal::Isolate*, v8::internal::Arguments*, unsigned int) [/usr/local/bin/node]
+22: v8::internal::(anonymous namespace)::Fast_ArrayConcat(v8::internal::Isolate*, v8::internal::Arguments*) [/usr/local/bin/node]
+23: v8::internal::Builtin_Impl_ArrayConcat(v8::internal::(anonymous namespace)::BuiltinArguments<(v8::internal::BuiltinExtraArguments)0>, v8::internal::Isolate*) [/usr/local/bin/node]
+24: v8::internal::Builtin_ArrayConcat(int, v8::internal::Object**, v8::internal::Isolate*) [/usr/local/bin/node]
+25: 0x293987e092a7
+Abort trap: 6

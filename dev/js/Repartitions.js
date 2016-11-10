@@ -178,13 +178,21 @@ var Repartitions = (function () {
          binomes parmi nombre de projets) / 2 */
         var N = this.projets.length;
         var p = this.etudiants.length;
-        return ((this.factorielle(p) / ((this.factorielle(p - 2) * 2))) * (this.factorielle(N) / this.factorielle(N - (p / 2)))) / 2;
+        return ((this.factorielle(p) / ((this.factorielle(p - 2) * 2))) * (this.factorielle(N) / this.factorielle(N - (p / 2)))) / (p / 2);
     };
     Repartitions.prototype.factorielle = function (n) {
         if (n == 0)
             return 1;
         else
             return n * this.factorielle(n - 1);
+    };
+    Repartitions.prototype.toString = function () {
+        var res = "[ ";
+        this.repartitions.forEach(function (repartition) {
+            res = res + repartition.toString() + "\na\n";
+            console.log(repartition.toString());
+        });
+        return res + " ]";
     };
     return Repartitions;
 }());

@@ -28,5 +28,9 @@ export class Assignation {
     return this.projet;
   }
 
+  toString(): string {
+    return "["+this.binome.toString()+","+this.projet.toString()+"]";
+  }
+
 
 }

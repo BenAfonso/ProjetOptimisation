@@ -1,5 +1,6 @@
 import {Voeux} from './Voeux';
 import {Projet} from './Projet';
+import {Settings} from './Settings';
 
 export class Etudiant {
   nom: string;
@@ -27,12 +28,16 @@ export class Etudiant {
   }
 
   getErreur(projet: Projet): number {
-    let err = this.voeux.getAllVoeux().indexOf(projet);
+    let err = Settings.CoefficientErreur[this.voeux.getAllVoeux().indexOf(projet)];
     if (err > -1) {
-      return err*err;
+      return err;
     } else {
-      return 1000;
+      return Settings.CoefficientErreurMax;
     }
+  }
+
+  toString(): string {
+    return this.nom;
   }
 
 }

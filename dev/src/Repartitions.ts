@@ -30,7 +30,7 @@ export class Repartitions {
     var t0 = new Date().getTime();
     this.compute();
     var t1 = new Date().getTime();
-    
+
     this.timeElapsed = (t1-t0);
   }
 
@@ -174,6 +174,10 @@ export class Repartitions {
             assignations.push(assignation);
           }
           let repartition: Repartition = new Repartition(assignations);
+          //OPTIMISATION: Ajouter contrôle d'erreur si <= ErreurMin ==> Ajouter.
+          // autre idée; compteur d'erreur sur boucle du dessus avec assignation
+          // mettre un while et dès que erreur > min:: sortir et ajouter seulement
+          // si erreurTotal <= erreurMin
           this.repartitions.push(repartition);
           assignations = [];
         }
@@ -247,12 +251,22 @@ export class Repartitions {
      let N = this.projets.length;
      let p = this.etudiants.length;
 
-     return ((this.factorielle(p) / ((this.factorielle(p-2)*2))) * (this.factorielle(N)/this.factorielle(N-(p/2)))) / 2
+     return ((this.factorielle(p) / ((this.factorielle(p-2)*2))) * (this.factorielle(N)/this.factorielle(N-(p/2)))) / (p/2)
   }
 
   factorielle(n: number): number {
     if (n==0) return 1
     else return n*this.factorielle(n-1);
+  }
+
+
+  toString(): string {
+    let res: string = "[ "
+    this.repartitions.forEach(function(repartition) {
+      res=res+repartition.toString()+"\na\n";
+      console.log(repartition.toString());
+    })
+    return res+" ]";
   }
 
 

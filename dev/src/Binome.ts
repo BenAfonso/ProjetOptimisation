@@ -25,4 +25,9 @@ export class Binome {
   isPartOf(b2: Binome): boolean {
     return (this.getEtudiant1() == b2.getEtudiant2() || this.getEtudiant2() == b2.getEtudiant1() || this.getEtudiant1() == b2.getEtudiant1() || this.getEtudiant2() == b2.getEtudiant2());
   }
+
+  toString(): string {
+    return "("+this.etudiant1.toString()+", "+this.etudiant2.toString()+")";
+  }
+
 }

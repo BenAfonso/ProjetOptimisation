@@ -17,6 +17,9 @@ var Assignation = (function () {
     Assignation.prototype.getProjet = function () {
         return this.projet;
     };
+    Assignation.prototype.toString = function () {
+        return "[" + this.binome.toString() + "," + this.projet.toString() + "]";
+    };
     return Assignation;
 }());
 exports.Assignation = Assignation;

@@ -25,4 +25,12 @@ export class Repartition {
     return this.erreur;
   }
 
+  toString() {
+    let res: string = "{ "
+    this.repartition.forEach(function(assignation) {
+      res=res+assignation.toString()+", ";
+    });
+    return res+"} Erreur: "+this.getErreur();
+  }
+
 }
