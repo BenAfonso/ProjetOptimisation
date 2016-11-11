@@ -120,6 +120,7 @@ var Repartitions = (function () {
         var nbBinomes = this.repartitionsBinomesPossibles.length;
         var nbProjets = this.repartitionsProjetsPossibles.length;
         var nbBinomesParRepartition = this.repartitionsBinomesPossibles[0].length;
+        var errMin = 10000000; //Temp
         for (var i = 0; i < nbBinomes; i++) {
             for (var j = 0; j < nbProjets; j++) {
                 for (var k = 0; k < nbBinomesParRepartition; k++) {
@@ -127,7 +128,15 @@ var Repartitions = (function () {
                     assignations.push(assignation);
                 }
                 var repartition = new Repartition_1.Repartition(assignations);
-                this.repartitions.push(repartition);
+                //OPTIMISATION: Ajouter contrôle d'erreur si <= ErreurMin ==> Ajouter.
+                // autre idée; compteur d'erreur sur boucle du dessus avec assignation
+                // mettre un while et dès que erreur > min:: sortir et ajouter seulement
+                // si erreurTotal <= erreurMin
+                if (repartition.getErreur() <= errMin) {
+                    errMin = repartition.getErreur();
+                    this.repartitions.push(repartition);
+                }
+                console.log(this.repartitions.length);
                 assignations = [];
             }
         }

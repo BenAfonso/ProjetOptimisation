@@ -2,8 +2,8 @@
 var Repartitions_1 = require('./Repartitions');
 var Generator_1 = require('./Generator');
 // Créations des projets
-var projets = Generator_1.Generator.generateProjets(8);
-var etudiants = Generator_1.Generator.generateEtudiants(18, projets);
+var projets = Generator_1.Generator.generateProjets(9);
+var etudiants = Generator_1.Generator.generateEtudiants(16, projets);
 // Création d'une répartition
 var repartitions = new Repartitions_1.Repartitions(etudiants, projets);
 console.log("===========================================================================");

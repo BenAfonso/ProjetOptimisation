@@ -7,7 +7,7 @@ import {Binome} from './Binome';
 import {Generator} from './Generator';
 
 // Créations des projets
-let projets: Array<Projet> = Generator.generateProjets(8);
+let projets: Array<Projet> = Generator.generateProjets(9);
 let etudiants: Array<Etudiant> = Generator.generateEtudiants(16,projets);
 
 // Création d'une répartition

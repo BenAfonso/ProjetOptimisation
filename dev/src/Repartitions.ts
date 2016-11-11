@@ -164,7 +164,7 @@ export class Repartitions {
       let nbBinomes: number = this.repartitionsBinomesPossibles.length;
       let nbProjets: number = this.repartitionsProjetsPossibles.length;
       let nbBinomesParRepartition: number = this.repartitionsBinomesPossibles[0].length;
-
+      let errMin: number = 10000000; //Temp
 
       for (var i = 0; i < nbBinomes; i++) {
 
@@ -178,7 +178,13 @@ export class Repartitions {
           // autre idée; compteur d'erreur sur boucle du dessus avec assignation
           // mettre un while et dès que erreur > min:: sortir et ajouter seulement
           // si erreurTotal <= erreurMin
-          this.repartitions.push(repartition);
+
+          if (repartition.getErreur() <= errMin) {
+            errMin = repartition.getErreur();
+            this.repartitions.push(repartition);
+          }
+
+          console.log(this.repartitions.length);
           assignations = [];
         }
 
