@@ -6,17 +6,18 @@
 #define DEV_CPP_VOEUX_H_
 
 #include <string>
+#include <vector>
 #include <Projet.h>
 
 //=================================
 // the actual class
 class Voeux {
     public:
-      Projet[] getAllVoeux();
+      vector<Projet> getAllVoeux();
       Projet getVoeux();
 
     private:
-      Projet voeux[];
+      vector<Projet> voeux;
 };
 
 

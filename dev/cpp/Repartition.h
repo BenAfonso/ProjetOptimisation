@@ -6,19 +6,20 @@
 #define DEV_CPP_REPARTITION_H_
 
 #include <string>
+#include <vector>
 #include <Assignation.h>
 
 //=================================
 // the actual class
 class Repartition {
     public:
-      Assignation[] getRepartition();
+      vector<Assignation> getRepartition();
       void calculerErreur();
       int getErreur();
 
 
     private:
-      Assignation[] assignations;
+      vector<Assignation> assignations;
       int erreur;
 };
 

@@ -6,6 +6,7 @@
 #define DEV_CPP_REPARTITIONS_H_
 
 #include <string>
+#include <vector>
 #include <Binome.h>
 #include <Assignation.h>
 #include <Projet.h>
@@ -26,28 +27,28 @@ class Repartitions {
       void calculerRepartitionsPossibles();
       void getMinErreur();
 
-      Binome[][] getRepartitionsBinomesPossibles();
-      Binome[] getBinomesPossibles();
-      Projet[][] getRepartitionsProjetsPossibles();
-      Etudiant[] getEtudiants();
+      vector<vector<Binome>> getRepartitionsBinomesPossibles();
+      vector<Binome> getBinomesPossibles();
+      vector<vector<Projet>> getRepartitionsProjetsPossibles();
+      vector<Etudiant> getEtudiants();
       int pickRandomNumberBetween(int a, int b);
-      Projet[] getProjets();
-      Repartition[] getRepartitions();
-      Repartition[] getBestRepartitions();
+      vector<Projet> getProjets();
+      vector<Repartition> getRepartitions();
+      vector<Repartition> getBestRepartitions();
       Repartition getBestRepartition();
       int getNombreRepartitions();
       int factorielle(int n);
       string toString();
 
     private:
-      Repartition[] repartitions;
-      Repartition[] bestRepartitions;
-      Projet[][] repartitionsProjetsPossibles;
-      Binome[][] repartitionsBinomesPossibles;
-      Etudiant[] etudiants;
-      Projet[] projets;
-      Binome[] binomesPossibles;
-      Projet[][] projetsPossibles;
+      vector<Repartition> repartitions;
+      vector<Repartition> bestRepartitions;
+      vector<vector<Projet>> repartitionsProjetsPossibles;
+      vector<vector<Binome>> repartitionsBinomesPossibles;
+      vector<Etudiant> etudiants;
+      vector<Projet> projets;
+      vector<Binome> binomesPossibles;
+      vector<vector<Projet>> projetsPossibles;
       int timeElapsed;
 };
 
